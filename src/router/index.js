@@ -7,6 +7,7 @@ import courseInfo from '@/views/stu/course/info.vue'
 import courseExam from '@/views/stu/course/exam.vue'
  import courseTest from '@/views/stu/course/test.vue'
 import courseSlides from '@/views/stu/course/slides.vue'
+import courseChapters from '@/views/stu/course/Chapters.vue'
 import testPage from '../views/stu/course/testPage.vue';
 import tea from '@/views/tea/index.vue';
 import teaCourse from '@/views/tea/course/index.vue'
@@ -30,6 +31,7 @@ import adminCourse from '@/views/admin/course.vue';
          {path:'/stu/course/test',component:courseTest},
         {path:'/stu/course/slides',component:courseSlides},
         {path:'/stu/course/exam', component:courseExam},
+        {path:'/stu/course/chapters', component:courseChapters},
     ]},
     {path:'/stu/testPage',component:testPage},
      {path:'/tea',component:tea},
