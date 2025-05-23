@@ -38,6 +38,9 @@
         <router-link to="/stu/course/exam" class="menu" active-class="active-menu"
           >课程考试</router-link
         >
+        <router-link to="/stu/course/chapters" class="menu" active-class="active-menu"
+          >课程章节</router-link
+        >
       </div>
     </div>
   </div>
