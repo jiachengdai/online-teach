@@ -3,7 +3,7 @@
     <div class="chapters-header">
       <h2>课程章节信息</h2>
       <div class="progress-info">
-        <span class="progress-text">已完成任务点: 1/7</span>
+        <span class="progress-text">已完成任务点: {{ completedCount }}/{{ chapters.length }}</span>
         <div class="progress-bar">
           <div class="progress-fill" :style="{width: progressPercent + '%'}"></div>
         </div>
@@ -11,78 +11,239 @@
     </div>
     
     <div class="chapters-content">
-      <div class="chapter-item" v-for="chapter in chapters" :key="chapter.id">
+      <div class="chapter-item" v-for="chapter in chapters" :key="chapter.chapterId" @click="showChapterFiles(chapter)">
         <div class="chapter-number">
-          <span class="number-circle" :class="chapter.completed ? 'completed' : ''">
-            {{ chapter.id }}
+          <span class="number-circle" :class="chapter.completed > 0 ? 'completed' : ''">
+            {{ chapter.orderNum }}
           </span>
         </div>
         <div class="chapter-info">
           <h3 class="chapter-title">{{ chapter.title }}</h3>
+          <p class="chapter-description" v-if="chapter.description">{{ chapter.description }}</p>
+          <div class="file-count" v-if="chapter.fileCount > 0">
+            <i class="el-icon-document"></i> {{ chapter.fileCount }} 个文件
+          </div>
         </div>
         <div class="chapter-status">
-          <span class="status-text">{{ chapter.status }}</span>
+          <span class="status-text" :class="{'completed-text': chapter.completed > 0}">
+            {{ chapter.completed > 0 ? '已完成' : '未完成' }}
+          </span>
         </div>
       </div>
     </div>
+
+    <!-- 章节文件对话框 -->
+    <el-dialog v-model="fileDialogVisible" :title="currentChapter ? currentChapter.title : '章节文件'" width="700px">
+      <div class="chapter-files" v-if="chapterFiles.length > 0">
+        <div class="file-item" v-for="file in chapterFiles" :key="file.fileId">
+          <div class="file-icon" :class="getFileIconClass(file.fileType)"></div>
+          <div class="file-info">
+            <h4 class="file-name">{{ file.fileName }}</h4>
+            <p class="file-description" v-if="file.description">{{ file.description }}</p>
+            <p class="file-type">{{ getFileTypeName(file.fileType) }}</p>
+          </div>
+          <div class="file-actions">
+            <el-button type="primary" size="small" @click="openFile(file.fileUrl)">
+              查看
+            </el-button>
+          </div>
+        </div>
+      </div>
+      <div class="no-files" v-else>
+        <p>该章节暂无文件</p>
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="fileDialogVisible = false">关闭</el-button>
+          <el-button type="primary" @click="markAsCompleted" :disabled="currentChapter && currentChapter.completed > 0">
+            标记为已完成
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useCourseInfoStore } from '@/stores/course'
+import { getChaptersByCourse, getChapterFiles, updateChapterProgress } from '@/api/chapter'
 
-// 假数据
-const chapters = ref([
-  {
-    id: 1,
-    title: '1.1 课程介绍',
-    status: '已完成',
-    completed: true
-  },
-  {
-    id: 2,
-    title: '1.2 报告1：专业依赖人选专业-计算机科学与技术-海问明',
-    status: '未完成',
-    completed: false
-  },
-  {
-    id: 3,
-    title: '1.3 报告2：专业依赖人选专业-信息安全-李玮',
-    status: '未完成',
-    completed: false
-  },
-  {
-    id: 4,
-    title: '1.4 视频1：计算机大类所有专业介绍',
-    status: '未完成',
-    completed: false
-  },
-  {
-    id: 5,
-    title: '1.5 视频2：计算机科学与技术专业',
-    status: '未完成',
-    completed: false
-  },
-  {
-    id: 6,
-    title: '1.6 视频3：智能科学与技术专业',
-    status: '未完成',
-    completed: false
-  }
-])
-
-// 计算进度百分比
+const courseStore = useCourseInfoStore()
+const chapters = ref([])
 const progressPercent = ref(0)
+const fileDialogVisible = ref(false)
+const currentChapter = ref(null)
+const chapterFiles = ref([])
+
+// 假数据 - 当无法获取课程信息时使用
+const mockChapters = [
+  { chapterId: 1, courseId: courseStore.info.courseId, title: '第一章 课程介绍', orderNum: 1, description: '介绍课程的基本内容和学习目标', completed: 1, fileCount: 2 },
+  { chapterId: 2, courseId: courseStore.info.courseId, title: '第二章 基础知识', orderNum: 2, description: '讲解课程的基础理论知识', completed: 0, fileCount: 1 },
+  { chapterId: 3, courseId: courseStore.info.courseId, title: '第三章 进阶内容', orderNum: 3, description: '深入探讨课程的核心概念', completed: 0, fileCount: 1 },
+  { chapterId: 4, courseId: courseStore.info.courseId, title: '第四章 实践应用', orderNum: 4, description: '通过实例讲解课程的应用场景', completed: 0, fileCount: 1 },
+  { chapterId: 5, courseId: courseStore.info.courseId, title: '第五章 前沿技术', orderNum: 5, description: '介绍该领域的最新研究成果和技术趋势', completed: 0, fileCount: 0 },
+  { chapterId: 6, courseId: courseStore.info.courseId, title: '第六章 总结与展望', orderNum: 6, description: '总结课程内容并展望未来发展方向', completed: 0, fileCount: 0 }
+]
+
+// 计算已完成章节数量
+const completedCount = computed(() => {
+  return chapters.value.filter(chapter => chapter.completed > 0).length
+})
 
 // 计算完成进度
 const calculateProgress = () => {
-  const completedCount = chapters.value.filter(chapter => chapter.completed).length
-  progressPercent.value = Math.round((completedCount / chapters.value.length) * 100)
+  if (chapters.value.length === 0) return
+  progressPercent.value = Math.round((completedCount.value / chapters.value.length) * 100)
+}
+
+// 获取课程章节
+const getChapters = async () => {
+  try {
+    // 从课程信息存储中获取当前课程ID
+    const courseInfo = courseStore.info
+    console.log('当前课程信息:', courseInfo)
+    
+    const courseId = courseInfo.courseId
+    if (!courseId) {
+      console.warn('未找到课程信息，使用假数据显示')
+      ElMessage.warning('未找到课程信息，显示示例数据')
+      chapters.value = mockChapters
+      calculateProgress()
+      return
+    }
+    
+    const response = await getChaptersByCourse(courseId)
+    if (response.code === 0) {
+      chapters.value = response.data
+      calculateProgress()
+    } else {
+      ElMessage.error(response.msg || '获取章节信息失败，显示示例数据')
+      chapters.value = mockChapters
+      calculateProgress()
+    }
+  } catch (error) {
+    console.error('获取章节信息出错:', error)
+    ElMessage.error('获取章节信息失败，显示示例数据')
+    chapters.value = mockChapters
+    calculateProgress()
+  }
+}
+
+// 章节文件假数据
+const mockChapterFiles = {
+  1: [ // 第一章的文件
+    { fileId: 1, chapterId: 1, fileName: '课程介绍.pdf', fileUrl: 'http://big-event0713.oss-cn-shanghai.aliyuncs.com/eafd4bfc-0ba1-4c2d-9cb0-231a88a6f180.pdf', fileType: 'pdf', description: '课程介绍文档' },
+    { fileId: 2, chapterId: 1, fileName: '课程介绍视频', fileUrl: 'http://example.com/video1.mp4', fileType: 'video', description: '课程介绍视频' }
+  ],
+  2: [ // 第二章的文件
+    { fileId: 3, chapterId: 2, fileName: '基础知识PPT', fileUrl: 'http://staff.ustc.edu.cn/~xlanchen/2011FallOS/slides/0_start.pdf', fileType: 'ppt', description: '基础知识讲解幻灯片' }
+  ],
+  3: [ // 第三章的文件
+    { fileId: 4, chapterId: 3, fileName: '进阶内容讲解', fileUrl: 'http://big-event0713.oss-cn-shanghai.aliyuncs.com/c7e5b17e-5e08-4aa1-9878-e6b0c6764bbc.pptx', fileType: 'ppt', description: '进阶内容讲解幻灯片' }
+  ],
+  4: [ // 第四章的文件
+    { fileId: 5, chapterId: 4, fileName: '实践案例视频', fileUrl: 'http://example.com/video2.mp4', fileType: 'video', description: '实践案例视频讲解' }
+  ]
+}
+
+// 显示章节文件
+const showChapterFiles = async (chapter) => {
+  currentChapter.value = chapter
+  fileDialogVisible.value = true
+  
+  try {
+    const response = await getChapterFiles(chapter.chapterId)
+    if (response.code === 0) {
+      chapterFiles.value = response.data
+    } else {
+      // 使用假数据
+      const mockFiles = mockChapterFiles[chapter.chapterId] || []
+      chapterFiles.value = mockFiles
+      ElMessage.warning((response.msg || '获取章节文件失败') + '，显示示例数据')
+    }
+  } catch (error) {
+    console.error('获取章节文件出错:', error)
+    // 使用假数据
+    const mockFiles = mockChapterFiles[chapter.chapterId] || []
+    chapterFiles.value = mockFiles
+    ElMessage.error('获取章节文件失败，显示示例数据')
+  }
+}
+
+// 获取文件图标类名
+const getFileIconClass = (fileType) => {
+  switch (fileType) {
+    case 'video':
+      return 'file-icon-video'
+    case 'ppt':
+      return 'file-icon-ppt'
+    case 'pdf':
+      return 'file-icon-pdf'
+    default:
+      return 'file-icon-default'
+  }
+}
+
+// 获取文件类型名称
+const getFileTypeName = (fileType) => {
+  switch (fileType) {
+    case 'video':
+      return '视频'
+    case 'ppt':
+      return '幻灯片'
+    case 'pdf':
+      return 'PDF文档'
+    default:
+      return '文件'
+  }
+}
+
+// 打开文件
+const openFile = (url) => {
+  window.open(url, '_blank')
+}
+
+// 标记章节为已完成
+const markAsCompleted = async () => {
+  if (!currentChapter.value) return
+  
+  try {
+    const response = await updateChapterProgress({
+      chapterId: currentChapter.value.chapterId,
+      completed: true
+    })
+    
+    if (response.code === 0) {
+      // 更新本地章节状态
+      currentChapter.value.completed = 1
+      calculateProgress()
+      ElMessage.success('章节已标记为完成')
+      fileDialogVisible.value = false
+      
+      // 重新获取章节列表以更新状态
+      getChapters()
+    } else {
+      // 即使API调用失败，也在本地更新状态，提供更好的用户体验
+      console.warn('API调用失败，但在本地更新状态:', response)
+      currentChapter.value.completed = 1
+      calculateProgress()
+      ElMessage.warning(response.msg || '服务器操作失败，但已在本地标记为完成')
+      fileDialogVisible.value = false
+    }
+  } catch (error) {
+    console.error('标记章节完成状态出错:', error)
+    // 即使发生错误，也在本地更新状态
+    currentChapter.value.completed = 1
+    calculateProgress()
+    ElMessage.warning('服务器操作失败，但已在本地标记为完成')
+    fileDialogVisible.value = false
+  }
 }
 
 onMounted(() => {
-  calculateProgress()
+  getChapters()
 })
 </script>
 
@@ -195,6 +356,25 @@ onMounted(() => {
   line-height: 1.4;
 }
 
+.chapter-description {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.file-count {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #007bff;
+  display: flex;
+  align-items: center;
+}
+
+.file-count i {
+  margin-right: 5px;
+}
+
 .chapter-status {
   margin-left: auto;
 }
@@ -205,5 +385,99 @@ onMounted(() => {
   padding: 4px 8px;
   border-radius: 12px;
   background-color: #f8f9fa;
+}
+
+.completed-text {
+  color: #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
+}
+
+/* 文件对话框样式 */
+.chapter-files {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  transition: background-color 0.2s;
+}
+
+.file-item:hover {
+  background-color: #e9ecef;
+}
+
+.file-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+}
+
+.file-icon-video {
+  background-color: #dc3545;
+}
+
+.file-icon-ppt {
+  background-color: #fd7e14;
+}
+
+.file-icon-pdf {
+  background-color: #007bff;
+}
+
+.file-icon-default {
+  background-color: #6c757d;
+}
+
+.file-info {
+  flex: 1;
+}
+
+.file-name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.file-description {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.file-type {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.file-actions {
+  margin-left: 15px;
+}
+
+.no-files {
+  text-align: center;
+  padding: 30px;
+  color: #6c757d;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
 }
 </style>
