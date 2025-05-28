@@ -101,13 +101,12 @@ const calculateProgress = () => {
 // 获取课程章节
 const getChapters = async () => {
   try {
-    // 从课程信息存储中获取当前课程ID
     const courseInfo = courseStore.info
     console.log('当前课程信息:', courseInfo)
     
-    const courseId = courseInfo.courseId
+    const courseId = courseInfo?.courseId
     if (!courseId) {
-      console.warn('未找到课程信息，使用假数据显示')
+      console.warn('未找到课程ID，使用假数据显示')
       ElMessage.warning('未找到课程信息，显示示例数据')
       chapters.value = mockChapters
       calculateProgress()
@@ -115,21 +114,21 @@ const getChapters = async () => {
     }
     
     const response = await getChaptersByCourse(courseId)
-    if (response.code === 0) {
+    if (response?.code === 0 && Array.isArray(response.data) && response.data.length > 0) {
       chapters.value = response.data
-      calculateProgress()
     } else {
       ElMessage.error(response.msg || '获取章节信息失败，显示示例数据')
       chapters.value = mockChapters
-      calculateProgress()
     }
   } catch (error) {
     console.error('获取章节信息出错:', error)
     ElMessage.error('获取章节信息失败，显示示例数据')
     chapters.value = mockChapters
+  } finally {
     calculateProgress()
   }
 }
+
 
 // 章节文件假数据
 const mockChapterFiles = {
