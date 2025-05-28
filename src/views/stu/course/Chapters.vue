@@ -79,12 +79,12 @@ const chapterFiles = ref([])
 
 // 假数据 - 当无法获取课程信息时使用
 const mockChapters = [
-  { chapterId: 1, courseId: courseStore.info.courseId, title: '第一章 课程介绍', orderNum: 1, description: '介绍课程的基本内容和学习目标', completed: 1, fileCount: 2 },
-  { chapterId: 2, courseId: courseStore.info.courseId, title: '第二章 基础知识', orderNum: 2, description: '讲解课程的基础理论知识', completed: 0, fileCount: 1 },
-  { chapterId: 3, courseId: courseStore.info.courseId, title: '第三章 进阶内容', orderNum: 3, description: '深入探讨课程的核心概念', completed: 0, fileCount: 1 },
-  { chapterId: 4, courseId: courseStore.info.courseId, title: '第四章 实践应用', orderNum: 4, description: '通过实例讲解课程的应用场景', completed: 0, fileCount: 1 },
-  { chapterId: 5, courseId: courseStore.info.courseId, title: '第五章 前沿技术', orderNum: 5, description: '介绍该领域的最新研究成果和技术趋势', completed: 0, fileCount: 0 },
-  { chapterId: 6, courseId: courseStore.info.courseId, title: '第六章 总结与展望', orderNum: 6, description: '总结课程内容并展望未来发展方向', completed: 0, fileCount: 0 }
+  { chapterId: 1, title: '第一章 课程介绍', orderNum: 1, description: '介绍课程的基本内容和学习目标', completed: 1, fileCount: 2 },
+  { chapterId: 2, title: '第二章 基础知识', orderNum: 2, description: '讲解课程的基础理论', completed: 0, fileCount: 1 },
+  { chapterId: 3, title: '第三章 进阶内容', orderNum: 3, description: '深入探讨课程核心概念', completed: 0, fileCount: 1 },
+  { chapterId: 4, title: '第四章 实践应用', orderNum: 4, description: '通过实例讲解应用场景', completed: 0, fileCount: 1 },
+  { chapterId: 5, title: '第五章 前沿技术', orderNum: 5, description: '介绍最新研究成果', completed: 0, fileCount: 0 },
+  { chapterId: 6, title: '第六章 总结与展望', orderNum: 6, description: '总结并展望未来', completed: 0, fileCount: 0 }
 ]
 
 // 计算已完成章节数量
