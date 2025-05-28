@@ -42,7 +42,7 @@ async function loadChapters() {
       return
     }
     const response = await getChaptersByCourse(courseId)
-    if (response.code === 200) {
+    if (response.code === 0) {
       chapters.value = response.data
     } else {
       console.error('获取章节列表失败，接口返回：', response)
@@ -76,7 +76,7 @@ async function handleAddChapter() {
       courseId: courseId
     }
     const response = await addChapter(chapterData)
-    if (response.code === 200) {
+    if (response.code === 0) {
       ElMessage.success('添加章节成功')
       addChapterDialogVisible.value = false
       await loadChapters()
@@ -96,7 +96,7 @@ async function handleDeleteChapter(chapter) {
       type: 'warning'
     })
     const response = await deleteChapter(chapter.chapterId)
-    if (response.code === 200) {
+    if (response.code === 0) {
       ElMessage.success('删除章节成功')
       await loadChapters()
     } else {
@@ -160,7 +160,7 @@ async function handleUploadFile() {
     formData.append('description', fileForm.value.description)
 
     const response = await uploadChapterFile(formData)
-    if (response.code === 200) {
+    if (response.code === 0) {
       ElMessage.success('上传文件成功')
       uploadDialogVisible.value = false
       await loadChapters()
@@ -178,7 +178,7 @@ async function showFilesDialog(chapter) {
   currentChapter.value = chapter
   try {
     const response = await getChapterFiles(chapter.chapterId)
-    if (response.code === 200) {
+    if (response.code === 0) {
       chapterFiles.value = response.data
       filesDialogVisible.value = true
     } else {
@@ -197,7 +197,7 @@ async function handleDeleteFile(file) {
       type: 'warning'
     })
     const response = await deleteChapterFile(file.fileId)
-    if (response.code === 200) {
+    if (response.code === 0) {
       ElMessage.success('删除文件成功')
       await showFilesDialog(currentChapter.value)
       await loadChapters()
@@ -227,3 +227,136 @@ function getFileTypeName(fileType) {
   return typeMap[fileType] || '未知类型'
 }
 </script>
+
+<template>
+  <div class="chapter-manage-container">
+    <el-card class="box-card">
+      <template #header>
+        <div class="card-header">
+          <span>章节管理</span>
+          <el-button type="primary" @click="showAddChapterDialog">添加章节</el-button>
+        </div>
+      </template>
+      <el-table :data="chapters" style="width: 100%">
+        <el-table-column prop="orderNum" label="章节顺序" width="100"></el-table-column>
+        <el-table-column prop="title" label="章节标题"></el-table-column>
+        <el-table-column prop="description" label="章节描述"></el-table-column>
+        <el-table-column label="操作" width="300">
+          <template #default="scope">
+            <el-button size="small" @click="showUploadDialog(scope.row)">上传文件</el-button>
+            <el-button size="small" @click="showFilesDialog(scope.row)">查看文件</el-button>
+            <el-button size="small" type="danger" @click="handleDeleteChapter(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+
+    <!-- 添加章节对话框 -->
+    <el-dialog v-model="addChapterDialogVisible" title="添加章节" width="500px">
+      <el-form :model="chapterForm" label-width="80px">
+        <el-form-item label="标题">
+          <el-input v-model="chapterForm.title"></el-input>
+        </el-form-item>
+        <el-form-item label="顺序">
+          <el-input-number v-model="chapterForm.orderNum" :min="1"></el-input-number>
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input type="textarea" v-model="chapterForm.description"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="addChapterDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleAddChapter">确定</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 上传文件对话框 -->
+    <el-dialog v-model="uploadDialogVisible" title="上传章节文件" width="500px">
+      <el-form :model="fileForm" label-width="80px">
+        <el-form-item label="文件名">
+          <el-input v-model="fileForm.fileName"></el-input>
+        </el-form-item>
+        <el-form-item label="文件类型">
+          <el-select v-model="fileForm.fileType" placeholder="请选择文件类型">
+            <el-option label="视频" value="video"></el-option>
+            <el-option label="幻灯片" value="ppt"></el-option>
+            <el-option label="PDF文档" value="pdf"></el-option>
+            <el-option label="其他" value="other"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input type="textarea" v-model="fileForm.description"></el-input>
+        </el-form-item>
+        <el-form-item label="文件">
+          <el-upload
+            ref="uploadRef"
+            class="upload-demo"
+            :auto-upload="false"
+            :on-change="handleFileChange"
+            :on-exceed="handleExceed"
+            :file-list="fileList"
+            :limit="1"
+          >
+            <template #trigger>
+              <el-button type="primary">选择文件</el-button>
+            </template>
+            <template #tip>
+              <div class="el-upload__tip">单个文件大小不超过100MB</div>
+            </template>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="uploadDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleUploadFile">上传</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 查看文件对话框 -->
+    <el-dialog v-model="filesDialogVisible" title="章节文件" width="600px">
+      <el-table :data="chapterFiles" style="width: 100%">
+        <el-table-column prop="fileName" label="文件名"></el-table-column>
+        <el-table-column label="文件类型">
+          <template #default="scope">
+            {{ getFileTypeName(scope.row.fileType) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="description" label="描述"></el-table-column>
+        <el-table-column label="操作" width="150">
+          <template #default="scope">
+            <el-button link type="primary" size="small" @click="openFile(scope.row.fileUrl)">查看</el-button>
+            <el-button link type="danger" size="small" @click="handleDeleteFile(scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="filesDialogVisible = false">关闭</el-button>
+        </span>
+      </template>
+    </el-dialog>
+  </div>
+</template>
+<style scoped>
+.chapter-manage-container {
+  width: 100%;
+  height: 100vh; /* 高度填满视口 */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 16px;
+  background-color: #f5f5f5;
+  overflow: auto;
+}
+
+.box-card {
+  width: 100%;
+  flex: 1;
+  overflow: auto;
+}
+</style>
+
