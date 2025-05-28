@@ -33,11 +33,15 @@ export function getChapterFiles(chapterId) {
  */
 export function updateChapterProgress(data) {
   return request({
-    url: '/chapter/progress',
+    url: `/chapter/progress`,
     method: 'post',
-    data
+    params: {
+      chapterId: data.chapterId,
+      completed: data.completed
+    }
   })
 }
+
 
 /**
  * 上传章节文件
