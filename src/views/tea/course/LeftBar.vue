@@ -40,6 +40,9 @@
         <router-link to="/tea/course/exam" class="menu" active-class="active-menu"
           >测验考试</router-link
         >
+        <router-link to="/tea/course/chapters" class="menu" active-class="active-menu"
+          >章节管理</router-link
+        >
       </div>
     </div>
   </div>

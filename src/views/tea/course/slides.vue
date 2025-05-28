@@ -1,12 +1,12 @@
 <template>
   <div class="mainBody">
     <div class="slideContainer">
-      <div style="width: 1050px; height: 45px">
-        <h2 style="margin-left: 20px; font-family: '阿里妈妈数黑体'">课件浏览</h2>
+      <div class="header">
+        <h2>课件浏览</h2>
       </div>
-      <div style="width: 1000px; height: 598px; overflow-y: auto; margin-left: 20px">
+      <div class="content">
         <div class="uploadCard">
-          <ElButton class="card-button" @click="handleUpload()">点此上传新课件</ElButton>
+          <el-button class="card-button" @click="handleUpload()">点此上传新课件</el-button>
         </div>
         <div class="slidesCard" v-for="slide in slides" :key="slide.slidesId">
           <div class="slidescontainer">
@@ -90,6 +90,7 @@ import { ElButton, ElMessage } from "element-plus";
 import { useUserInfoStore } from "@/stores/userinfo";
 import { getSlides } from "@/api/slides";
 const uploadSlidesVisible = ref(false);
+const formLabelWidth = ref('120px');
 
 const userStore = useUserInfoStore();
 const courseInfoStore = useCourseInfoStore();
@@ -132,10 +133,12 @@ const getAllSlides = async () => {
   }
 };
 
-onMounted(() => {
-  getCourseClassInfo();
-  getAllSlides();
+onMounted(async () => {
+  await getCourseClassInfo();
+  await getAllSlides();
   userInfo.value = userStore.info;
+  console.log('课程ID:', courseInfo.value.courseId);
+  console.log('获取到的课件:', slides.value);
 });
 import { genFileId } from "element-plus";
 import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
@@ -179,10 +182,12 @@ const handleUpload = () => {
 <style scoped>
 .mainBody {
   overflow-y: auto;
-  width: 1150px;
-  height: 100%;
+  width: 100%;
+  height: 100vh;
   background-color: #f2f5f9;
   display: flex;
+  justify-content: center;
+  align-items: flex-start;
   padding: 20px;
 }
 
@@ -212,13 +217,32 @@ const handleUpload = () => {
   gap: 0.75em;
 }
 .slideContainer {
-  width: 1050px;
-  height: 670px;
+  width: 100%;
+  max-width: 1050px;
+  min-height: 670px;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
     rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
   background-color: white;
-  margin-top: 6px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.header h2 {
+  margin: 0;
+  font-family: '阿里妈妈数黑体';
+  font-size: 24px;
+  color: #333;
+}
+
+.content {
+  height: calc(100% - 60px);
+  overflow-y: auto;
+  padding: 0 20px;
 }
 .status-ind {
   width: 0.625em;
@@ -287,7 +311,15 @@ button:hover {
   margin: 0px;
 }
 .uploadCard {
-  width: 70%;
-  height: 50px;
+  width: 100%;
+  padding: 20px 0;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.card-button {
+  font-size: 14px;
+  padding: 10px 20px;
 }
 </style>
