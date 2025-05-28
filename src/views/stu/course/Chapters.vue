@@ -248,7 +248,11 @@ onMounted(() => {
 
 <style scoped>
 .chapters-container {
-  padding: 20px;
+  max-width: 1200px;    /* 最大宽度 */
+  width: 100%;          /* 宽度撑满父容器 */
+  margin: 0 auto;       /* 居中 */
+  padding: 20px 40px;   /* 上下20px，左右40px */
+  box-sizing: border-box;
   background-color: #f8f9fa;
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -285,7 +289,7 @@ onMounted(() => {
 }
 
 .progress-bar {
-  width: 120px;
+  width: 160px;    /* 放宽进度条宽度 */
   height: 6px;
   background-color: #e9ecef;
   border-radius: 3px;
@@ -303,6 +307,8 @@ onMounted(() => {
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  width: 100%;    /* 宽度撑满 */
+  max-width: 100%; /* 去掉最大宽度限制 */
 }
 
 .chapter-item {
@@ -330,12 +336,12 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 28px;      /* 放大数字圈 */
+  height: 28px;
   border-radius: 50%;
   background-color: #6c757d;
   color: white;
-  font-size: 12px;
+  font-size: 14px;  /* 字号加大 */
   font-weight: 600;
 }
 
@@ -349,7 +355,7 @@ onMounted(() => {
 
 .chapter-title {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;  /* 字号放大 */
   color: #333;
   font-weight: 500;
   line-height: 1.4;
@@ -357,14 +363,14 @@ onMounted(() => {
 
 .chapter-description {
   margin: 5px 0 0;
-  font-size: 12px;
+  font-size: 14px;  /* 放大描述字体 */
   color: #6c757d;
   line-height: 1.4;
 }
 
 .file-count {
   margin-top: 5px;
-  font-size: 12px;
+  font-size: 14px;   /* 放大字体 */
   color: #007bff;
   display: flex;
   align-items: center;
@@ -379,9 +385,9 @@ onMounted(() => {
 }
 
 .status-text {
-  font-size: 12px;
+  font-size: 14px;   /* 放大状态字体 */
   color: #6c757d;
-  padding: 4px 8px;
+  padding: 6px 12px; /* 增大内边距 */
   border-radius: 12px;
   background-color: #f8f9fa;
 }
@@ -412,15 +418,15 @@ onMounted(() => {
 }
 
 .file-icon {
-  width: 40px;
-  height: 40px;
+  width: 48px;       /* 放大图标 */
+  height: 48px;
   border-radius: 8px;
   margin-right: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 20px;
+  font-size: 24px;   /* 图标字体加大 */
 }
 
 .file-icon-video {
@@ -445,20 +451,20 @@ onMounted(() => {
 
 .file-name {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;   /* 放大文件名 */
   font-weight: 500;
   color: #333;
 }
 
 .file-description {
   margin: 5px 0 0;
-  font-size: 12px;
+  font-size: 14px;
   color: #6c757d;
 }
 
 .file-type {
   margin: 5px 0 0;
-  font-size: 12px;
+  font-size: 14px;
   color: #6c757d;
   font-style: italic;
 }
@@ -479,4 +485,5 @@ onMounted(() => {
   gap: 10px;
   margin-top: 20px;
 }
+
 </style>
