@@ -403,7 +403,7 @@ const submitUpload = () => {
 <style scoped>
 .mainBody {
   overflow-y: auto;
-  width: 1150px;
+  width: 1250px;
   height: 100%;
   background-color: #f2f5f9;
   display: flex;
@@ -423,7 +423,7 @@ const submitUpload = () => {
   margin-bottom: 30px;
   display: flex;
   justify-content: space-between;
-  width: 1050px;
+  width: 1150px;
   height: 300px;
 }
 .spaceContainer {
@@ -431,7 +431,7 @@ const submitUpload = () => {
   height: 500px;
 
   .card {
-    width: 990px;
+    width: 1130px;
     height: fit-content;
     background-color: white;
 
@@ -670,7 +670,7 @@ const submitUpload = () => {
   cursor: pointer;
 }
 .teaInfoOutContainer {
-  width: 1050px;
+  width: 1250px;
   height: auto;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,

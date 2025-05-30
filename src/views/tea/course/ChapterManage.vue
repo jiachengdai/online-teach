@@ -343,7 +343,7 @@ function getFileTypeName(fileType) {
 </template>
 <style scoped>
 .chapter-manage-container {
-  width: 100%;
+  width: 85%;
   height: 100vh; /* 高度填满视口 */
   display: flex;
   flex-direction: column;

@@ -1,10 +1,10 @@
 <template>
   <div class="mainBody">
     <div class="teaexamContainer">
-      <div style="width: 1050px; height: 45px">
+      <div style="width: 1150px; height: 45px">
         <h2 style="margin-left: 20px; font-family: '阿里妈妈数黑体'">测验考试</h2>
       </div>
-      <div style="width: 1000px; height: 598px; overflow-y: auto; margin-left: 20px">
+      <div style="width: 1180px; height: 598px; overflow-y: auto; margin-left: 20px">
         <div style="height: 50px">
           <el-button @click="newPaperVisible = true" style="margin-top: 8px"
             >新建试卷</el-button
@@ -32,7 +32,7 @@
             ></path>
           </svg>
           <div class="testCardRight">
-            <div style="width: 600px">
+            <div style="width: 780px">
               <div style="font-size: 17px">{{ test.paperTitle }}</div>
               <div style="font-size: 15px">考试时长：{{ test.duration }} min</div>
             </div>
@@ -456,7 +456,7 @@ const makePaper = (paperId) => {
 <style scoped>
 .mainBody {
   overflow-y: auto;
-  width: 1150px;
+  width: 1250px;
   height: 100%;
   background-color: #f2f5f9;
   display: flex;
@@ -484,7 +484,7 @@ const makePaper = (paperId) => {
   box-sizing: content-box;
 }
 .teaexamContainer {
-  width: 1050px;
+  width: 1250px;
   height: 670px;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,

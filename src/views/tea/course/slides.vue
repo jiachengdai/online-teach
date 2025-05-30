@@ -1,11 +1,11 @@
 <template>
   <div class="mainBody">
     <div class="slideContainer">
-      <div class="header">
-        <h2>课件浏览</h2>
+      <div style="width: 1150px; height: 45px">
+        <h2 style="margin-left: 20px; font-family: '阿里妈妈数黑体'">课件浏览</h2>
       </div>
-      <div class="content">
-        <div class="uploadCard">
+      <div style="width: 1150px; height: 598px; overflow-y: auto; margin-left: 20px">
+       <div class="uploadCard">
           <el-button class="card-button" @click="handleUpload()">点此上传新课件</el-button>
         </div>
         <div class="slidesCard" v-for="slide in slides" :key="slide.slidesId">
@@ -28,6 +28,8 @@
         </div>
       </div>
     </div>
+  </div> 
+ 
     <el-dialog v-model="uploadSlidesVisible" title="上传章节课件" width="500">
       <el-form :model="newSlide">
         <el-form-item label="课程编号" :label-width="formLabelWidth">
@@ -80,7 +82,7 @@
         </div>
       </template>
     </el-dialog>
-  </div>
+ 
 </template>
 
 <script setup lang="ts">
@@ -179,20 +181,17 @@ const handleUpload = () => {
 };
 </script>
 
-<style scoped>
+<style>
 .mainBody {
-  overflow-y: auto;
-  width: 100%;
-  height: 100vh;
+  width: 1250px;
+  height: 100%;
   background-color: #f2f5f9;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
   padding: 20px;
 }
 
 .slidesCard {
-  width: 95%;
+  width: 98%;
   height: 100px;
   background-color: #f2f3f7;
   border-radius: 0.75em;
@@ -216,38 +215,11 @@ const handleUpload = () => {
   flex-direction: row;
   gap: 0.75em;
 }
-.slideContainer {
-  width: 100%;
-  max-width: 1050px;
-  min-height: 670px;
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
-    rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
-  background-color: white;
-  margin: 0 auto;
-  padding: 20px;
-}
 
-.header {
-  margin-bottom: 20px;
-}
-
-.header h2 {
-  margin: 0;
-  font-family: '阿里妈妈数黑体';
-  font-size: 24px;
-  color: #333;
-}
-
-.content {
-  height: calc(100% - 60px);
-  overflow-y: auto;
-  padding: 0 20px;
-}
 .status-ind {
   width: 0.625em;
   height: 0.625em;
-  background-color: #1677ff;
+  background-color: #16243d;
   margin: 0.375em 0;
   border-radius: 0.5em;
 }
@@ -291,7 +263,7 @@ const handleUpload = () => {
   font-size: 15px;
   background-color: transparent;
   font-weight: 600;
-  color: #1677ff;
+  color: #1e3051;
   border: none;
   border-radius: 1.5em;
   cursor: pointer;
@@ -310,16 +282,14 @@ button:hover {
 .text-content {
   margin: 0px;
 }
-.uploadCard {
-  width: 100%;
-  padding: 20px 0;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.card-button {
-  font-size: 14px;
-  padding: 10px 20px;
+.slideContainer {
+  width: 1250px;
+  height: 670px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+    rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  background-color: white;
+  margin-top: 6px;
 }
 </style>
+

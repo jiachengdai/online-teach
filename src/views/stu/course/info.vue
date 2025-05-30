@@ -172,6 +172,7 @@
 </template>
 
 <script setup>
+
 import { onMounted, ref } from "vue";
 import { useCourseInfoStore } from "@/stores/course";
 import { getComments, sendComment, replyComment, delCommentService } from "@/api/comment";

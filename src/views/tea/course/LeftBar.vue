@@ -1,6 +1,6 @@
 <template>
-  <div class="stuCourseLeftBody">
-    <div class="stuCourseSelfInfo">
+  <div class="teaCourseLeftBody">
+    <div class="teaCourseSelfInfo">
       <div
         style="
           font-size: 28px;
@@ -19,12 +19,12 @@
           style="width: 100%; height: 100%; border-radius: 10px"
         />
       </div>
-      <el-card class="txtInfo">
+      <!-- <el-card class="txtInfo">
         <p style="line-height: 10px">课程名称: {{ courseInfo.courseName }}</p>
         <p style="line-height: 10px">开设学期: {{ courseInfo.term }}</p>
-      </el-card>
+      </el-card> -->
 
-      <div class="menuContainer" style="margin-top: 330px">
+      <div class="menuContainer"  >
         <router-link to="/tea/course/info" class="menu" active-class="active-menu"
           >课程信息</router-link
         >
@@ -93,15 +93,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.stuCourseLeftBody {
+.teaCourseLeftBody {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 330px;
+  width: 190px;
   height: 100%;
   background-color: #f2f5f9;
 }
-.stuCourseSelfInfo {
+.teaCourseSelfInfo {
   margin-top: 15px;
   position: relative;
   width: 88%;
@@ -136,7 +136,7 @@ onMounted(() => {
   height: 100%;
 }
 .menuContainer {
-  margin-top: 360px;
+  margin-top: 220px;
 }
 .menu {
   display: block;
