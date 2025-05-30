@@ -7,7 +7,7 @@ import request from '@/utils/request'
  */
 export function getChaptersByCourse(courseId) {
   return request({
-    url: `/chapter/list/${courseId}`,
+    url: `/teacher/chapter/list/${courseId}`,
     method: 'get'
   })
 }
@@ -19,29 +19,47 @@ export function getChaptersByCourse(courseId) {
  */
 export function getChapterFiles(chapterId) {
   return request({
-    url: `/chapter/files/${chapterId}`,
+    url: `/teacher/chapter/files/${chapterId}`,
     method: 'get'
   })
 }
 
 /**
- * 更新章节完成状态
- * @param {Object} data 请求数据
- * @param {number} data.chapterId 章节ID
- * @param {boolean} data.completed 是否完成
+ * 添加课程章节
+ * @param {Object} chapterData 章节数据
  * @returns {Promise} 请求结果
  */
-export function updateChapterProgress(data) {
+export function addChapter(chapterData) {
   return request({
-    url: `/chapter/progress`,
+    url: '/teacher/chapter/add',
     method: 'post',
-    params: {
-      chapterId: data.chapterId,
-      completed: data.completed
-    }
+    data: chapterData
   })
 }
 
+/**
+ * 删除课程章节
+ * @param {number} chapterId 章节ID
+ * @returns {Promise} 请求结果
+ */
+export function deleteChapter(chapterId) {
+  return request({
+    url: `/teacher/chapter/delete/${chapterId}`,
+    method: 'delete'
+  })
+}
+
+/**
+ * 删除章节文件
+ * @param {number} fileId 文件ID
+ * @returns {Promise} 请求结果
+ */
+export function deleteChapterFile(fileId) {
+  return request({
+    url: `/teacher/chapter/file/delete/${fileId}`,
+    method: 'delete'
+  })
+}
 
 /**
  * 上传章节文件
@@ -50,7 +68,7 @@ export function updateChapterProgress(data) {
  */
 export function uploadChapterFile(formData) {
   return request({
-    url: '/chapter/upload',
+    url: '/teacher/chapter/file/upload',
     method: 'post',
     data: formData,
     headers: {

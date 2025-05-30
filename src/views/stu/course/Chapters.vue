@@ -79,12 +79,12 @@ const chapterFiles = ref([])
 
 // 假数据 - 当无法获取课程信息时使用
 const mockChapters = [
-  { chapterId: 1, courseId: courseStore.info.courseId, title: '第一章 课程介绍', orderNum: 1, description: '介绍课程的基本内容和学习目标', completed: 1, fileCount: 2 },
-  { chapterId: 2, courseId: courseStore.info.courseId, title: '第二章 基础知识', orderNum: 2, description: '讲解课程的基础理论知识', completed: 0, fileCount: 1 },
-  { chapterId: 3, courseId: courseStore.info.courseId, title: '第三章 进阶内容', orderNum: 3, description: '深入探讨课程的核心概念', completed: 0, fileCount: 1 },
-  { chapterId: 4, courseId: courseStore.info.courseId, title: '第四章 实践应用', orderNum: 4, description: '通过实例讲解课程的应用场景', completed: 0, fileCount: 1 },
-  { chapterId: 5, courseId: courseStore.info.courseId, title: '第五章 前沿技术', orderNum: 5, description: '介绍该领域的最新研究成果和技术趋势', completed: 0, fileCount: 0 },
-  { chapterId: 6, courseId: courseStore.info.courseId, title: '第六章 总结与展望', orderNum: 6, description: '总结课程内容并展望未来发展方向', completed: 0, fileCount: 0 }
+  { chapterId: 1, title: '第一章 课程介绍', orderNum: 1, description: '介绍课程的基本内容和学习目标', completed: 1, fileCount: 2 },
+  { chapterId: 2, title: '第二章 基础知识', orderNum: 2, description: '讲解课程的基础理论', completed: 0, fileCount: 1 },
+  { chapterId: 3, title: '第三章 进阶内容', orderNum: 3, description: '深入探讨课程核心概念', completed: 0, fileCount: 1 },
+  { chapterId: 4, title: '第四章 实践应用', orderNum: 4, description: '通过实例讲解应用场景', completed: 0, fileCount: 1 },
+  { chapterId: 5, title: '第五章 前沿技术', orderNum: 5, description: '介绍最新研究成果', completed: 0, fileCount: 0 },
+  { chapterId: 6, title: '第六章 总结与展望', orderNum: 6, description: '总结并展望未来', completed: 0, fileCount: 0 }
 ]
 
 // 计算已完成章节数量
@@ -101,13 +101,12 @@ const calculateProgress = () => {
 // 获取课程章节
 const getChapters = async () => {
   try {
-    // 从课程信息存储中获取当前课程ID
     const courseInfo = courseStore.info
     console.log('当前课程信息:', courseInfo)
     
-    const courseId = courseInfo.courseId
+    const courseId = courseInfo?.courseId
     if (!courseId) {
-      console.warn('未找到课程信息，使用假数据显示')
+      console.warn('未找到课程ID，使用假数据显示')
       ElMessage.warning('未找到课程信息，显示示例数据')
       chapters.value = mockChapters
       calculateProgress()
@@ -115,21 +114,21 @@ const getChapters = async () => {
     }
     
     const response = await getChaptersByCourse(courseId)
-    if (response.code === 0) {
+    if (response?.code === 0 && Array.isArray(response.data) && response.data.length > 0) {
       chapters.value = response.data
-      calculateProgress()
     } else {
       ElMessage.error(response.msg || '获取章节信息失败，显示示例数据')
       chapters.value = mockChapters
-      calculateProgress()
     }
   } catch (error) {
     console.error('获取章节信息出错:', error)
     ElMessage.error('获取章节信息失败，显示示例数据')
     chapters.value = mockChapters
+  } finally {
     calculateProgress()
   }
 }
+
 
 // 章节文件假数据
 const mockChapterFiles = {
@@ -249,7 +248,11 @@ onMounted(() => {
 
 <style scoped>
 .chapters-container {
-  padding: 20px;
+  max-width: 1200px;    /* 最大宽度 */
+  width: 100%;          /* 宽度撑满父容器 */
+  margin: 0 auto;       /* 居中 */
+  padding: 20px 40px;   /* 上下20px，左右40px */
+  box-sizing: border-box;
   background-color: #f8f9fa;
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -286,7 +289,7 @@ onMounted(() => {
 }
 
 .progress-bar {
-  width: 120px;
+  width: 160px;    /* 放宽进度条宽度 */
   height: 6px;
   background-color: #e9ecef;
   border-radius: 3px;
@@ -304,6 +307,8 @@ onMounted(() => {
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  width: 100%;    /* 宽度撑满 */
+  max-width: 100%; /* 去掉最大宽度限制 */
 }
 
 .chapter-item {
@@ -331,12 +336,12 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 28px;      /* 放大数字圈 */
+  height: 28px;
   border-radius: 50%;
   background-color: #6c757d;
   color: white;
-  font-size: 12px;
+  font-size: 14px;  /* 字号加大 */
   font-weight: 600;
 }
 
@@ -350,7 +355,7 @@ onMounted(() => {
 
 .chapter-title {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;  /* 字号放大 */
   color: #333;
   font-weight: 500;
   line-height: 1.4;
@@ -358,14 +363,14 @@ onMounted(() => {
 
 .chapter-description {
   margin: 5px 0 0;
-  font-size: 12px;
+  font-size: 14px;  /* 放大描述字体 */
   color: #6c757d;
   line-height: 1.4;
 }
 
 .file-count {
   margin-top: 5px;
-  font-size: 12px;
+  font-size: 14px;   /* 放大字体 */
   color: #007bff;
   display: flex;
   align-items: center;
@@ -380,9 +385,9 @@ onMounted(() => {
 }
 
 .status-text {
-  font-size: 12px;
+  font-size: 14px;   /* 放大状态字体 */
   color: #6c757d;
-  padding: 4px 8px;
+  padding: 6px 12px; /* 增大内边距 */
   border-radius: 12px;
   background-color: #f8f9fa;
 }
@@ -413,15 +418,15 @@ onMounted(() => {
 }
 
 .file-icon {
-  width: 40px;
-  height: 40px;
+  width: 48px;       /* 放大图标 */
+  height: 48px;
   border-radius: 8px;
   margin-right: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 20px;
+  font-size: 24px;   /* 图标字体加大 */
 }
 
 .file-icon-video {
@@ -446,20 +451,20 @@ onMounted(() => {
 
 .file-name {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;   /* 放大文件名 */
   font-weight: 500;
   color: #333;
 }
 
 .file-description {
   margin: 5px 0 0;
-  font-size: 12px;
+  font-size: 14px;
   color: #6c757d;
 }
 
 .file-type {
   margin: 5px 0 0;
-  font-size: 12px;
+  font-size: 14px;
   color: #6c757d;
   font-style: italic;
 }
@@ -480,4 +485,5 @@ onMounted(() => {
   gap: 10px;
   margin-top: 20px;
 }
+
 </style>

@@ -1,7 +1,7 @@
 import {createRouter,createWebHistory}from 'vue-router'
 
 import LoginVue from '../views/Login.vue';
-  import stu from '@/views/stu/index.vue';
+import stu from '@/views/stu/index.vue';
 import stuCourse from '@/views/stu/course/index.vue'
 import courseInfo from '@/views/stu/course/info.vue'
 import courseExam from '@/views/stu/course/exam.vue'
@@ -14,9 +14,10 @@ import teaCourse from '@/views/tea/course/index.vue'
 import teaCourseInfo from '@/views/tea/course/info.vue'
 import teaCourseExam from '@/views/tea/course/exam.vue'
 import teaCourseTest from '@/views/tea/course/test.vue'
-    import teaCourseSlides from '@/views/tea/course/slides.vue'
+import teaCourseSlides from '@/views/tea/course/slides.vue'
 import teaTestPage from '../views/tea/course/testPage.vue';
 import teaCourseStudents from '@/views/tea/course/students.vue';
+import teaCourseChapters from '@/views/tea/course/ChapterManage.vue';
 import adminStu from '@/views/admin/students.vue';
 import adminTea from '@/views/admin/teachers.vue';
 import admin from '@/views/admin/index.vue';
@@ -36,6 +37,7 @@ import adminCourse from '@/views/admin/course.vue';
     {path:'/stu/testPage',component:testPage},
      {path:'/tea',component:tea},
     {path:'/tea/course',component:teaCourse,children:[
+        {path:'/tea/course/chapters',component:teaCourseChapters},
         {path:'/tea/course/info',component:teaCourseInfo},
          {path:'/tea/course/test',component:teaCourseTest},
         {path:'/tea/course/slides',component:teaCourseSlides},
