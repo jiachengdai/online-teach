@@ -1,10 +1,10 @@
 <template>
   <div class="mainBody">
     <div class="slideContainer">
-      <div style="width: 1050px; height: 45px">
+      <div style="width: 1150px; height: 45px">
         <h2 style="margin-left: 20px; font-family: '阿里妈妈数黑体'">课件浏览</h2>
       </div>
-      <div style="width: 1050px; height: 598px; overflow-y: auto; margin-left: 20px">
+      <div style="width: 1150px; height: 598px; overflow-y: auto; margin-left: 20px">
         <div class="slidesCard" v-for="slide in slides" :key="slide.slidesId">
           <div class="slidescontainer">
             <div class="left">
@@ -79,7 +79,7 @@ onMounted(() => {
 
 <style>
 .mainBody {
-  width: 1150px;
+  width: 1250px;
   height: 100%;
   background-color: #f2f5f9;
   display: flex;
@@ -87,7 +87,7 @@ onMounted(() => {
 }
 
 .slidesCard {
-  width: 95%;
+  width: 98%;
   height: 100px;
   background-color: #f2f3f7;
   border-radius: 0.75em;
@@ -179,7 +179,7 @@ button:hover {
   margin: 0px;
 }
 .slideContainer {
-  width: 1050px;
+  width: 1250px;
   height: 670px;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,

@@ -253,7 +253,7 @@ const delComment = async (commentId) => {
 <style scoped>
 .mainBody {
   overflow-y: auto;
-  width: 1150px;
+  width: 1250px;
   height: 100%;
   background-color: #f2f5f9;
   display: flex;
@@ -265,17 +265,16 @@ const delComment = async (commentId) => {
 .infoContainer {
   display: flex;
   justify-content: space-between;
-  width: 1000px;
+  width: 1100px;
   height: 300px;
   margin: 20px;
 }
 
 .spaceContainer {
-  width: 1050px;
+  width: 1150px;
   height: 500px;
-
   .card {
-    width: 990px;
+    width: 1130px;
     height: fit-content;
     background-color: white;
 
@@ -513,7 +512,7 @@ const delComment = async (commentId) => {
   cursor: pointer;
 }
 .stuInfoOutContainer {
-  width: 1050px;
+  width: 1250px;
   height: auto;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,

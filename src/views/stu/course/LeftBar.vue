@@ -19,15 +19,18 @@
           style="width: 100%; height: 100%; border-radius: 10px"
         />
       </div>
-      <el-card class="txtInfo">
+      <!-- <el-card class="txtInfo">
         <p style="line-height: 10px">课程名称: {{ courseInfo.courseName }}</p>
         <p style="line-height: 10px">开设学期: {{ courseInfo.term }}</p>
         <p style="line-height: 10px">总评成绩: {{ summaryScore }}分</p>
-      </el-card>
+      </el-card> -->
 
       <div class="menuContainer">
         <router-link to="/stu/course/info" class="menu" active-class="active-menu"
           >课程信息</router-link
+        >
+          <router-link to="/stu/course/chapters" class="menu" active-class="active-menu"
+          >课程章节</router-link
         >
         <router-link to="/stu/course/slides" class="menu" active-class="active-menu"
           >教学课件</router-link
@@ -38,9 +41,7 @@
         <router-link to="/stu/course/exam" class="menu" active-class="active-menu"
           >课程考试</router-link
         >
-        <router-link to="/stu/course/chapters" class="menu" active-class="active-menu"
-          >课程章节</router-link
-        >
+      
       </div>
     </div>
   </div>
@@ -90,12 +91,12 @@ onMounted(() => {
 });
 </script>
 
-<style>
+<style scoped>
 .stuCourseLeftBody {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 330px;
+  width: 193px;
   height: 100%;
   background-color: #f2f5f9;
 }
@@ -134,7 +135,7 @@ onMounted(() => {
   height: 100%;
 }
 .menuContainer {
-  margin-top: 360px;
+  margin-top: 260px;
 }
 .menu {
   display: block;

@@ -148,83 +148,112 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="makePaperVisible" title="组卷" width="500">
-      <el-form :model="makePaperForm">
-        <el-form-item label="试卷编号" :label-width="formLabelWidth">
-          <el-input v-model="makePaperForm.paperId" autocomplete="off" disabled />
-        </el-form-item>
-        <div class="stuContainer">
-          <el-table :data="allExe" style="width: 100%" max-height="200">
-            <el-table-column fixed prop="exeId" label="题目编号" width="80" />
-
-            <el-table-column prop="type" label="类型" width="80" />
-
-            <el-table-column prop="question" label="题目" width="220" />
-
-            <el-table-column prop="ans" label="答案" width="120" />
-            <el-table-column prop="ansText" label="解析" width="720" />
-
-            <el-table-column fixed="right" label="操作" min-width="120">
-              <template #default="scope">
-                <el-popover
-                  :visible="scope.row.popVisible"
-                  placement="bottom"
-                  :width="160"
-                  title="设置分值"
-                >
-                  分数： <el-input v-model="singleExe.score" autocomplete="off" />
-                  <div style="text-align: right; margin: 0">
-                    <el-button size="small" text @click="scope.row.popVisible = false"
-                      >取消</el-button
-                    >
-                    <el-button
-                      size="small"
-                      type="primary"
-                      @click="
-                        () => {
-                          select(scope.row.exeId);
-                          scope.row.popVisible = false;
-                        }
-                      "
-                    >
-                      确认
-                    </el-button>
-                  </div>
-                  <template #reference>
-                    <el-button @click="scope.row.popVisible = true">选择</el-button>
-                  </template>
-                </el-popover>
-              </template>
-            </el-table-column>
-          </el-table>
-          <hr />
-          <b> 已选题目</b>
-          <el-table :data="makePaperForm.paperExes" style="width: 100%" max-height="200">
-            <el-table-column fixed prop="exeId" label="题目编号" width="80" />
-            <el-table-column prop="paperExeId" label="试卷题号" width="80" />
-
-            <el-table-column prop="score" label="分数" width="80" />
-            <el-table-column fixed="right" label="操作" min-width="120">
-              <template #default="scope">
-                <el-button
-                  link
-                  type="primary"
-                  size="small"
-                  @click.prevent="delPaperExe(scope.row.paperExeId)"
-                >
-                  删除
-                </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+    <el-dialog v-model="makePaperVisible" title="组卷" width="1100">
+      <el-form :model="makePaperForm" label-width="90px">
+      <el-form-item label="试卷编号">
+        <el-input v-model="makePaperForm.paperId" autocomplete="off" disabled />
+      </el-form-item>
+ <div   style="  margin-bottom: 20px;display:flex;max-height: 350px;">
+      <div style="width: 40%; margin-right: 20px; background: #f9f9f9; border-radius: 8px; padding: 16px; min-height: 320px;">
+        <b>题库</b>
+        <el-table :data="allExe" style="width: 100%" max-height="300">
+          <el-table-column prop="exeId" label="题目编号" width="80" />
+          <el-table-column prop="type" label="类型" width="80" />
+          <el-table-column prop="question" label="题目" width="180" />
+          <el-table-column prop="ans" label="答案" width="100" />
+          <el-table-column prop="ansText" label="解析" width="120" />
+          <el-table-column fixed="right" label="操作" width="120">
+          <template #default="scope">
+            <el-popover
+            v-model:visible="scope.row.popVisible"
+            placement="bottom"
+            width="180"
+            title="设置分值"
+            >
+            <div style="margin-bottom: 8px;">
+              <el-input
+              v-model="singleExe.score"
+              autocomplete="off"
+              placeholder="请输入分数"
+              size="small"
+              style="width: 120px"
+              type="number"
+              min="1"
+              />
+            </div>
+            <div style="text-align: right;">
+              <el-button size="small" @click="scope.row.popVisible = false">取消</el-button>
+              <el-button
+              size="small"
+              type="primary"
+              @click="
+                () => {
+                select(scope.row.exeId);
+                scope.row.popVisible = false;
+                }
+              "
+              >添加</el-button>
+            </div>
+            <template #reference>
+              <el-button
+              size="small"
+              @click="
+                () => {
+                singleExe.score = '';
+                scope.row.popVisible = true;
+                }
+              "
+              >添加</el-button>
+            </template>
+            </el-popover>
+          </template>
+          </el-table-column>
+        </el-table>
+      </div>
+       
+        <!-- 试卷预览 -->
+        <div style="width: 60%; background: #f9f9f9; border-radius: 8px; padding: 16px; min-height: 320px;overflow-y: auto; "> 
+          <b>试卷预览</b>
+          <div v-if="makePaperForm.paperExes.length == 0" style="color: #aaa; margin-top: 16px;">
+            暂无题目，请从左侧添加
+          </div>
+          <div v-else  >
+            <div
+              v-for="(item, idx) in makePaperForm.paperExes"
+              :key="item.paperExeId || item.exeId"
+              style="margin-bottom: 18px; border-bottom: 1px dashed #e0e0e0; padding-bottom: 10px;"
+            >
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div style="font-weight: bold; margin-bottom: 4px;">
+            {{ idx + 1 }}. [{{ allExe.find(e => e.exeId === item.exeId)?.type || '未知类型' }}]
+            (分值: {{ item.score }})
+          </div>
+          <el-button
+            link
+            type="danger"
+            size="small"
+            @click.prevent="delPaperExe(item.paperExeId)"
+            >移除</el-button>
+              </div>
+              <div style="margin-bottom: 4px;">
+          {{ allExe.find(e => e.exeId === item.exeId)?.question || '题目已被删除' }}
+              </div>
+              <div style="font-size: 13px; color: #888;">
+          答案：{{ allExe.find(e => e.exeId === item.exeId)?.ans || '-' }}
+          <span v-if="allExe.find(e => e.exeId === item.exeId)?.ansText">
+            | 解析：{{ allExe.find(e => e.exeId === item.exeId)?.ansText }}
+          </span>
+              </div>
+            </div>
+          </div>
         </div>
+     </div>
       </el-form>
-
       <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="makePaperVisible = false">取消</el-button>
-          <el-button type="primary" @click="makePaperExe()"> 确认 </el-button>
-        </div>
+      <div class="dialog-footer">
+        <el-button @click="makePaperVisible = false">取消</el-button>
+        <el-button type="primary" @click="makePaperExe()">确认组卷</el-button>
+      </div>
       </template>
     </el-dialog>
 

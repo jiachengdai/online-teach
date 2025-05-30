@@ -20,49 +20,31 @@
           :key="question.chooseId"
         >
           <p class="questionTitle">{{ index + 1 }}. {{ question.question }}</p>
-          <p               class="questionBody"
-          >
-            <input
-              type="radio"
-              :name="'choose' + index"
-              value="A"
-              @change="selectAnswer('choose', index, 'A')"
-            />
-            A. {{ question.optionA }}
-          </p>
-          <p               class="questionBody"
-          >
-            <input
-              type="radio"
-              :name="'choose' + index"
-              value="B"
-              @change="selectAnswer('choose', index, 'B')"
-            />
-            B. {{ question.optionB }}
-          </p>
-          <p               class="questionBody"
-          >
-            <input
-              type="radio"
-              :name="'choose' + index"
-              value="C"
-              @change="selectAnswer('choose', index, 'C')"
-              
-            />
-            C. {{ question.optionC }}
-          </p>
-          <p               class="questionBody"
-          >
-            <input
-              type="radio"
-              :name="'choose' + index"
-              value="D"
-              @change="selectAnswer('choose', index, 'D')"
-            />
-            D. {{ question.optionD }} 
-          </p>
+          <div class="choose-options">
+            <label
+              v-for="opt in ['A', 'B', 'C', 'D']"
+              :key="opt"
+              class="choose-option"
+              :class="[
+                { selected: answers.choose[index] === opt },
+                isFinished && answers.choose[index] === opt && question.answer === opt ? 'correct' : '',
+                isFinished && answers.choose[index] === opt && question.answer !== opt ? 'wrong' : ''
+              ]"
+            >
+              <input
+                type="radio"
+                :name="'choose' + index"
+                :value="opt"
+                v-model="answers.choose[index]"
+                @change="selectAnswer('choose', index, opt)"
+                :disabled="isFinished"
+              />
+              <span class="option-circle">{{ opt }}</span>
+              <span class="option-content">{{ question['option' + opt] }}</span>
+              <span v-if="isFinished && question.answer === opt" class="answer-tag">正确答案</span>
+            </label>
+          </div>
           <div class="answerContainer" v-if="isFinished" @click="getAnswer(question.paperExeId,0)">点击这里获取我的答案与解析</div>
-
         </div>
         <div v-if="blankList.length!=0" class="TypeTitle">填空题</div>
 
@@ -73,14 +55,18 @@
           :key="question.blankId"
         >
           <p class="questionTitle">{{ index + 1 }}. {{ question.question }}</p>
-          <p >
           <div class="form">
-            <input class="input" placeholder="在这里输入你的答案" @change="selectAnswer('blank', index, $event.target.value)" type="text" />
+            <input class="input"
+              placeholder="在这里输入你的答案"
+              @change="selectAnswer('blank', index, $event.target.value)"
+              type="text"
+              v-model="answers.blank[index]"
+              :disabled="isFinished"
+              :class="isFinished ? (answers.blank[index] === question.answer ? 'input-correct' : 'input-wrong') : ''"
+            />
             <span class="input-border"></span>
           </div>
           <div class="answerContainer" v-if="isFinished" @click="getAnswer(question.paperExeId,1)">点击这里获取我的答案与解析</div>
-
-           </p>
         </div>
         <div v-if="judgeList.length!=0" class="TypeTitle">判断题</div>
 
@@ -91,26 +77,29 @@
           :key="question.judegId"
         >
           <p class="questionTitle"> {{ index + 1 }}. {{ question.question }}</p>
-          <p               class="questionBody"
-          >
-            <input
-              type="radio"
-              :name="'judge' + index"
-              value="1"
-              @change="selectAnswer('judge', index, '1')"
-            />
-            √
-          </p>
-          <p               class="questionBody"
-          >
-            <input
-              type="radio"
-              :name="'judge' + index"
-              value="0"
-              @change="selectAnswer('judge', index, '0')"
-            />
-            ×
-          </p>
+          <div class="choose-options">
+            <label
+              v-for="opt in [{v:'1',t:'√'}, {v:'0',t:'×'}]"
+              :key="opt.v"
+              class="choose-option"
+              :class="[
+                { selected: answers.judge[index] === opt.v },
+                isFinished && answers.judge[index] === opt.v && question.answer === opt.v ? 'correct' : '',
+                isFinished && answers.judge[index] === opt.v && question.answer !== opt.v ? 'wrong' : ''
+              ]"
+            >
+              <input
+                type="radio"
+                :name="'judge' + index"
+                :value="opt.v"
+                v-model="answers.judge[index]"
+                @change="selectAnswer('judge', index, opt.v)"
+                :disabled="isFinished"
+              />
+              <span class="option-circle">{{ opt.t }}</span>
+              <span v-if="isFinished && question.answer === opt.v" class="answer-tag">正确答案</span>
+            </label>
+          </div>
           <div class="answerContainer" v-if="isFinished" @click="getAnswer(question.paperExeId,2)">点击这里获取我的答案与解析</div>
 
         </div>
@@ -123,12 +112,15 @@
           :key="question.shortAnsId"
         >
           <p class="questionTitle">{{ index + 1 }}. {{ question.question }}</p>
-         
-            
-            <textarea    class="custom-textarea"  
-             placeholder="在这里输入你的答案"   @change="selectAnswer('shortAns', index, $event.target.value)"   />
-             <div class="answerContainer" v-if="isFinished" @click="getAnswer(question.paperExeId,3)">点击这里获取我的答案与解析</div>
-
+          <textarea
+            class="custom-textarea"
+            placeholder="在这里输入你的答案"
+            @change="selectAnswer('shortAns', index, $event.target.value)"
+            v-model="answers.shortAns[index]"
+            :disabled="isFinished"
+            :class="isFinished ? (answers.shortAns[index] === question.answer ? 'input-correct' : 'input-wrong') : ''"
+          />
+          <div class="answerContainer" v-if="isFinished" @click="getAnswer(question.paperExeId,3)">点击这里获取我的答案与解析</div>
         </div>
       </div>
     </div>
@@ -389,9 +381,52 @@ const backToHome = () => {
 const getObjectScoreService = async() => {
     let result=await getObjectScore(testInfo.value.paperId,);
 }
-const submitAnswers = async () => {
-  const formattedAnswers = [];
+const checkAnswersBeforeSubmit = () => {
+  const unAnswered = [];
+  if (chooseList.value.length) {
+    chooseList.value.forEach((q, i) => {
+      if (answers.value.choose[i] === undefined || answers.value.choose[i] === "") {
+        unAnswered.push(`选择题第${i + 1}题`);
+      }
+    });
+  }
+  if (blankList.value.length) {
+    blankList.value.forEach((q, i) => {
+      if (answers.value.blank[i] === undefined || answers.value.blank[i] === "") {
+        unAnswered.push(`填空题第${i + 1}题`);
+      }
+    });
+  }
+  if (judgeList.value.length) {
+    judgeList.value.forEach((q, i) => {
+      if (answers.value.judge[i] === undefined || answers.value.judge[i] === "") {
+        unAnswered.push(`判断题第${i + 1}题`);
+      }
+    });
+  }
+  if (shortAnsList.value.length) {
+    shortAnsList.value.forEach((q, i) => {
+      if (answers.value.shortAns[i] === undefined || answers.value.shortAns[i] === "") {
+        unAnswered.push(`简答题第${i + 1}题`);
+      }
+    });
+  }
+  return unAnswered;
+};
 
+const submitAnswers = async () => {
+  const unAnswered = checkAnswersBeforeSubmit();
+  if (unAnswered.length > 0) {
+    const msg = `还有未作答的题目：\n${unAnswered.join('，')}\n是否确认提交？`;
+    if (!window.confirm(msg)) {
+      return;
+    }
+  } else {
+    if (!window.confirm('确定要提交试卷吗？')) {
+      return;
+    }
+  }
+  const formattedAnswers = [];
   chooseList.value.forEach((question, index) => {
     if (answers.value.choose[index] !== undefined) {
       formattedAnswers.push({
@@ -400,7 +435,6 @@ const submitAnswers = async () => {
       });
     }
   });
-
   blankList.value.forEach((question, index) => {
     if (answers.value.blank[index] !== undefined) {
       formattedAnswers.push({
@@ -409,7 +443,6 @@ const submitAnswers = async () => {
       });
     }
   });
-
   judgeList.value.forEach((question, index) => {
     if (answers.value.judge[index] !== undefined) {
       formattedAnswers.push({
@@ -418,7 +451,6 @@ const submitAnswers = async () => {
       });
     }
   });
-
   shortAnsList.value.forEach((question, index) => {
     if (answers.value.shortAns[index] !== undefined) {
       formattedAnswers.push({
@@ -427,11 +459,10 @@ const submitAnswers = async () => {
       });
     }
   });
-
   try {
     await submitTestAnswers({ answers: formattedAnswers });
     submitRecord();
-getObjectScoreService();
+    getObjectScoreService();
     centerDialogVisible.value = true;
     ElMessage.success("试卷提交成功");
   } catch (error) {
@@ -453,7 +484,37 @@ onMounted(() => {
   getJudgeList();
   getShortAnsList();
   startTimer();
-  getCurExamRecord();
+  getCurExamRecord().then(() => {
+    // 如果已作答，回填答案
+    if (isFinished.value && examRecord.value && examRecord.value.answers) {
+      // examRecord.value.answers 应为后端返回的答题数组
+      // [{paperExeId, stuAns, ...}]
+      const ansMap = {};
+      examRecord.value.answers.forEach(item => {
+        ansMap[item.paperExeId] = item.stuAns;
+      });
+      chooseList.value.forEach((q, i) => {
+        if (ansMap[q.paperExeId] !== undefined) {
+          answers.value.choose[i] = ansMap[q.paperExeId];
+        }
+      });
+      blankList.value.forEach((q, i) => {
+        if (ansMap[q.paperExeId] !== undefined) {
+          answers.value.blank[i] = ansMap[q.paperExeId];
+        }
+      });
+      judgeList.value.forEach((q, i) => {
+        if (ansMap[q.paperExeId] !== undefined) {
+          answers.value.judge[i] = ansMap[q.paperExeId];
+        }
+      });
+      shortAnsList.value.forEach((q, i) => {
+        if (ansMap[q.paperExeId] !== undefined) {
+          answers.value.shortAns[i] = ansMap[q.paperExeId];
+        }
+      });
+    }
+  });
 });
 </script>
 
@@ -509,33 +570,55 @@ onMounted(() => {
 .answerCard {
   margin: 30px 20px;
   width: 90%;
+  background: none;
+  border-radius: 10px;
+  box-shadow: none;
+  padding-bottom: 12px;
+  border: none;
  }
 .answerCard-title {
-    display: flex;
+  display: flex;
   width: 100%;
   height: 40px;
   font-size: 20px;
+  align-items: center;
+  border-bottom: none;
+  padding: 0 10px;
+  background: none;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
  }
 .answerCard-body {
-    overflow-y: auto;
+  overflow-y: auto;
   display: flex;
-  flex-wrap: wrap; /* 允许子元素换行 */
+  flex-wrap: wrap;
   width: 100%;
+  padding: 10px 10px 0 10px;
  }
 .anserCard-single {
   font-family: '华文宋体';
-  border-radius: 10px;
+  border-radius: 8px;
   font-weight: bold;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 10px 10px 10px 0px;
-  width: 42px;
-  height: 42px;
-  background-color: rgba(245, 245, 245,1);
+  width: 38px;
+  height: 38px;
+  background: none;
+  color: #333;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s, color 0.2s;
  }
 .anserCard-single.answered {
-  background-color:#34fc34;
+  background: #e6f7e6;
+  color: #008c00;
+  border: none;
+ }
+.anserCard-single:hover {
+  border: none;
+  background: #f0f6ff;
  }
 .typeTitle {
   width: 100%;
@@ -548,8 +631,6 @@ button {
   padding: 10px 20px;
   border: none;
   cursor: pointer;
-}
-.inputArea {
 }
 .form {
   --width-of-input: 400px;
@@ -640,6 +721,63 @@ input:focus ~ .input-border {
 }
 .questionBody{
   font-size: 16px;
+  font-family: '华文中宋';
+}
+
+/* 选择题仿照图片样式 */
+.choose-options {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 18px 0 10px 0;
+}
+.choose-option {
+  display: flex;
+  align-items: center;
+  padding: 0 0 0 8px;
+  min-height: 56px;
+  border-radius: 12px;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.2s;
+  position: relative;
+  font-size: 18px;
+  user-select: none;
+}
+.choose-option:hover {
+  background: #f7fafc;
+}
+.choose-option.selected {
+  background: #f5f8fa;
+  box-shadow: 0 2px 8px 0 rgba(88,145,255,0.07);
+}
+.choose-option input[type="radio"] {
+  display: none;
+}
+.option-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #d3dbe7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: #5a6a85;
+  background: #fff;
+  margin-right: 18px;
+  transition: border 0.2s, color 0.2s, background 0.2s;
+}
+.choose-option.selected .option-circle {
+  border: 2.5px solid #5891ff;
+  color: #fff;
+  background: linear-gradient(120deg, #5891ff 0%, #34fc34 100%);
+  box-shadow: 0 2px 8px 0 rgba(88,145,255,0.13);
+}
+.option-content {
+  font-size: 18px;
+  color: #222;
   font-family: '华文中宋';
 }
 </style>

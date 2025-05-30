@@ -12,7 +12,7 @@ onMounted(() => {});
 <style>
 .mainBody {
   overflow-y: auto;
-  width: 1150px;
+  width: 1250px;
   height: 100%;
   background-color: #f2f5f9;
   display: flex;

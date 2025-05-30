@@ -254,7 +254,7 @@ onMounted(() => {
   padding: 20px 40px;   /* 上下20px，左右40px */
   box-sizing: border-box;
   background-color: #f8f9fa;
-  min-height: 100vh;
+    
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -306,9 +306,10 @@ onMounted(() => {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  max-height: 600px;
   width: 100%;    /* 宽度撑满 */
   max-width: 100%; /* 去掉最大宽度限制 */
+  overflow-y: auto;
 }
 
 .chapter-item {
