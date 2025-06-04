@@ -18,6 +18,9 @@ instance.interceptors.response.use(
         if(result.data.code===0){
             return result.data;
         }
+        else if(result.data.result !== undefined){
+            return result.data;
+        }
       //  alert(result.data.msg?result.data.msg:'服务异常')
        ElMessage.error(result.data.message?result.data.message:'服务异常') 
         return Promise.reject(result.data);
