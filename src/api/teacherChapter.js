@@ -7,7 +7,7 @@ import request from '@/utils/request'
  */
 export function getChaptersByCourse(courseId) {
   return request({
-    url: `/teacher/chapter/list/${courseId}`,
+    url: `chapter/list/${courseId}`,
     method: 'get'
   })
 }
@@ -19,7 +19,7 @@ export function getChaptersByCourse(courseId) {
  */
 export function getChapterFiles(chapterId) {
   return request({
-    url: `/teacher/chapter/files/${chapterId}`,
+    url: `chapter/files/${chapterId}`,
     method: 'get'
   })
 }
@@ -31,7 +31,7 @@ export function getChapterFiles(chapterId) {
  */
 export function addChapter(chapterData) {
   return request({
-    url: '/teacher/chapter/add',
+    url: 'chapter/add',
     method: 'post',
     data: chapterData
   })
@@ -44,7 +44,7 @@ export function addChapter(chapterData) {
  */
 export function deleteChapter(chapterId) {
   return request({
-    url: `/teacher/chapter/delete/${chapterId}`,
+    url: `chapter/delete/${chapterId}`,
     method: 'delete'
   })
 }
@@ -56,7 +56,7 @@ export function deleteChapter(chapterId) {
  */
 export function deleteChapterFile(fileId) {
   return request({
-    url: `/teacher/chapter/file/delete/${fileId}`,
+    url: `chapter/file/delete/${fileId}`,
     method: 'delete'
   })
 }
@@ -68,7 +68,7 @@ export function deleteChapterFile(fileId) {
  */
 export function uploadChapterFile(formData) {
   return request({
-    url: '/teacher/chapter/file/upload',
+    url: 'chapter/file/upload',
     method: 'post',
     data: formData,
     headers: {

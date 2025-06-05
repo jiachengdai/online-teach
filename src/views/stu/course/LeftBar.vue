@@ -41,6 +41,9 @@
         <router-link to="/stu/course/exam" class="menu" active-class="active-menu"
           >课程考试</router-link
         >
+        <router-link to="/stu/course/AI_assistant" class="menu" active-class="active-menu"
+          >AI助教
+        </router-link>
       
       </div>
     </div>

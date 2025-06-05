@@ -22,10 +22,10 @@ import adminStu from '@/views/admin/students.vue';
 import adminTea from '@/views/admin/teachers.vue';
 import admin from '@/views/admin/index.vue';
 import adminCourse from '@/views/admin/course.vue';
+import AIAssistant from '@/views/stu/course/AIAssistant.vue';
  const routes=[
     {path:'/login',component:LoginVue},
-    {path:'/', redirect:'/login' 
-     },
+    {path:'/', redirect:'/login'},
      {path:'/stu',component:stu},
     {path:'/stu/course',component:stuCourse,children:[
         {path:'/stu/course/info',component:courseInfo},
@@ -33,6 +33,7 @@ import adminCourse from '@/views/admin/course.vue';
         {path:'/stu/course/slides',component:courseSlides},
         {path:'/stu/course/exam', component:courseExam},
         {path:'/stu/course/chapters', component:courseChapters},
+        {path:'/stu/course/AI_assistant', component:AIAssistant},
     ]},
     {path:'/stu/testPage',component:testPage},
      {path:'/tea',component:tea},
